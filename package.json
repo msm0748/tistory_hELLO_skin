@@ -1,0 +1,43 @@
+{
+  "name": "hello",
+  "author": {
+    "name": "Sangwoo Jeong",
+    "email": "pronist@naver.com",
+    "url": "https://github.com/pronist"
+  },
+  "scripts": {
+    "start": "cross-env NODE_ENV=development tidory start",
+    "preview": "cross-env NODE_ENV=development tidory preview",
+    "production": "cross-env NODE_ENV=production tidory production",
+    "deploy": "tidory deploy",
+    "store": "tidory store",
+    "lint": "eslint --ext .js --ignore-path .gitignore . && pug-lint ."
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tistory-projects/tistory-skin-hELLO"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.13",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.27.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-loader": "^4.0.0",
+    "eslint-plugin-import": "^2.23.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "pug-lint": "^2.6.0"
+  },
+  "dependencies": {
+    "@alpinejs/collapse": "^3.11.1",
+    "@alpinejs/intersect": "^3.11.1",
+    "alpinejs": "^3.10.5",
+    "highlight.js": "^11.7.0",
+    "lazysizes": "^5.3.0",
+    "swiper": "^8.4.5",
+    "tailwindcss": "^3.2.4",
+    "tidory": "^8.3.3"
+  }
+}

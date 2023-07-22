@@ -1,0 +1,25 @@
+.sidebar-element
+  #counter(class='overflow-hidden flex justify-around text-center')
+    div
+      .title Total
+      .count [##_count_total_##]
+    div
+      .title Today
+      .count [##_count_today_##]
+    div
+      .title Yesterday
+      .count [##_count_yesterday_##]
+
+style
+  :postcss
+    #sidebar {
+      #counter {
+        .title {
+          @apply text-h-400 text-sm;
+        }
+
+        .count {
+          @apply text-h-600 dark:text-h-200;
+        }
+      }
+    }

@@ -1,0 +1,19 @@
+.post
+  #{`s_${type}_rep_thumbnail`}
+    a.thumbnail(href=`[##_${type}_rep_link_##]`)
+      img.lazyload(
+        data-src=`[##_${type}_rep_thumbnail${type === 'list' ? '' : '_url'}_##]`
+        data-sizes='auto'
+        alt=''
+        class='object-cover bg-h-100')
+  .description(class='flex flex-col')
+    if hasCategory
+      a(
+        href=`[##_${type}_rep_category_link_##]`
+        class='text-sm text-h-400') #{`[##_${type}_rep_category_##]`}
+    h2
+      a(
+        href=`[##_${type}_rep_link_##]`
+        class='text-h-800 dark:text-h-200 [&_img]:hidden') #{`[##_${type}_rep_title_##]`}
+    time(class='text-h-400 text-sm') #{`[##_${type}_rep_${type === 'list' ? 'regdate' : 'date'}_##]`}
+    p(class='relative overflow-hidden text-h-400 leading-7') #{`[##_${type}_rep_summary_##]`}

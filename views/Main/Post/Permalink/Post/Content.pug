@@ -1,0 +1,667 @@
+article#content(
+  x-ref='content'
+  class='relative')
+  div(x-data='content')
+    s_if_var_toc
+      include Content/TOC
+    #article(x-ref='article')
+      template(
+        x-ref='articleTemplate'
+        x-teleport='#article')
+        div
+          | #{`[##_${type}_rep_desc_##]`}
+          include Content/Subscription
+    s_if_var_scrollspy
+      include Content/Scrollspy
+
+script(once='alpine-content-component').
+  document.addEventListener('alpine:init', () => Alpine.data('content', () => ({
+    /**
+     * Support Headings
+     *
+     * @property {array} headings
+     */
+    supportHeadings: '.contents_style > h2, .contents_style > h3',
+
+    /**
+     * Headings
+     *
+     * @property {array} headings
+     */
+    headings: [],
+
+    /**
+     * Init 'content' Component
+     */
+    init () {
+      this.setAnchorToHeadings()
+      this.collectHeading()
+
+      this.setLazyLoadToImages()
+      this.setRatioToImages()
+      this.setPositionToImages()
+
+      this.highlightCodeBlocks()
+    },
+
+    /**
+     * Syntax highlighting code blocks in template
+     */
+    highlightCodeBlocks () {
+      this.$article.querySelectorAll('pre code').forEach(hljs.highlightElement)
+    },
+
+    /**
+     * Collect heading in template
+     */
+    collectHeading () {
+      this.$headings.forEach($heading => {
+        const heading = this.heading($heading)
+
+        this.headings.push(heading)
+      })
+    },
+
+    /**
+     * Get new Scrollspy item
+     *
+     * @param {HTMLElement} $heading
+     *
+     * @return {object}
+     */
+    heading ($heading) {
+      return {
+        tagName: $heading.tagName,
+        id: $heading.id,
+        href: `#${$heading.id}`,
+        text: $heading.textContent,
+        active: false
+      }
+    },
+
+    /**
+     * Set lazy load to images in template
+     */
+    setLazyLoadToImages () {
+      this.$article.querySelectorAll('figure[class^=image] img').forEach(this.setLazyLoadToImage)
+    },
+
+    /**
+     * Set lazy load to image
+     *
+     * @param {object} $image
+     */
+    setLazyLoadToImage ($image) {
+      $image.classList.add('lazyload')
+
+      $image.dataset.src = $image.getAttribute('src')
+      $image.dataset.srcset = $image.getAttribute('srcset')
+      $image.dataset.sizes = 'auto'
+
+      $image.removeAttribute('src')
+      $image.removeAttribute('srcset')
+    },
+
+    /**
+     * set Ratio to images in template
+     */
+    setRatioToImages () {
+      this.$article.querySelectorAll('figure.imageslideblock').forEach(this.setRatioToImageSlideBlock.bind(this))
+      this.$article.querySelectorAll('figure.imageblock').forEach(this.setRatioToImageBlock.bind(this))
+      this.$article.querySelectorAll('figure.imagegridblock').forEach(this.setRatioToImageGridBlock.bind(this))
+    },
+
+    /**
+     * Set Ratio to image block
+     *
+     * @param {HTMLElement} $imageBlock
+     */
+    setRatioToImageBlock ($imageBlock) {
+      const $imageWrap = $imageBlock.querySelector('span, a')
+      const $image = $imageWrap.querySelector('img')
+
+      const paddingBottom = this.ratio($imageBlock, $image)
+
+      $imageWrap.style.paddingBottom = `${paddingBottom}%`
+    },
+
+    /**
+     * Set Ratio to image grid block
+     *
+     * @param {HTMLElement} $imageBlock
+     */
+    setRatioToImageGridBlock ($imageBlock) {
+      const $imageWraps = $imageBlock.querySelectorAll('span, a')
+
+      $imageWraps.forEach($imageWrap => {
+        const $image = $imageWrap.querySelector('img')
+
+        const paddingBottom = this.ratio($imageWrap, $image)
+
+        $imageWrap.style.paddingBottom = `${paddingBottom}%`
+      })
+    },
+
+    /**
+     * Set Ratio to image slide block
+     *
+     * @param {HTMLElement} $imageBlock
+     */
+    setRatioToImageSlideBlock ($imageBlock) {
+      const $imageWrap = $imageBlock.querySelector('.image-container')
+      const $image = $imageWrap.querySelector('img')
+
+      const paddingBottom = this.ratio($image, $image)
+
+      $imageWrap.style.paddingBottom = `${paddingBottom}%`
+    },
+
+    /**
+     * Get ratio
+     *
+     * @param {HTMLElement} $originBlock
+     * @param {HTMLElement} $image
+     *
+     * @return {number}
+     */
+    ratio ($originBlock, $image) {
+      let width = $originBlock.dataset.originWidth
+      let height = $originBlock.dataset.originHeight
+
+      if ($image.hasAttribute('width') && $image.hasAttribute('height')) {
+        width = $image.getAttribute('width')
+        height = $image.getAttribute('height')
+      }
+
+      width = $originBlock.dataset.widthpercent
+        ? width * (100 / $originBlock.dataset.widthpercent)
+        : width
+
+      return height / width * 100
+    },
+
+    /**
+     * Set position to images
+     */
+    setPositionToImages () {
+      this.$article.querySelectorAll('figure.imageblock').forEach(this.setImageBlockPosition.bind(this))
+      this.$article.querySelectorAll('figure.imagegridblock').forEach(this.setImageGridBlockPosition.bind(this))
+    },
+
+    /**
+     * Set image block position
+     *
+     * @param {HTMLElement} $imageBlock
+     */
+    setImageBlockPosition ($imageBlock) {
+      const width = this.imageBlockWidth($imageBlock)
+
+      if ($imageBlock.classList.contains('alignCenter')) {
+        this.setImageBlockToCenter($imageBlock, width)
+      }
+
+      if ($imageBlock.classList.contains('widthContent')) {
+        return
+      }
+
+      this.setImageBlockWidth($imageBlock, width)
+    },
+
+    /**
+     * Set image grid block position
+     *
+     * @param {HTMLElement} $imageBlock
+     */
+    setImageGridBlockPosition ($imageBlock) {
+      const width = this.imageGridBlockWidth()
+
+      this.setImageBlockToCenter($imageBlock, width)
+      this.setImageBlockWidth($imageBlock, width)
+    },
+
+    /**
+     * Center image block
+     *
+     * @param {HTMLElement} $imageBlock
+     */
+    imageBlockWidth ($imageBlock) {
+      const $imageWrap = $imageBlock.querySelector('span, a')
+      const $image = $imageWrap.querySelector('img')
+      const width = $image.getAttribute('width') || $imageBlock.dataset.originWidth
+
+      return width > 1100 ? 1100 : width
+    },
+
+    /**
+     * Center image grid block
+     */
+    imageGridBlockWidth () {
+      return 1100
+    },
+
+    /**
+     * set Image Width
+     *
+     * @param {HTMLElement} $imageBlock
+     * @param {String|Number} width
+     */
+    setImageBlockWidth ($imageBlock, width) {
+      $imageBlock.style.width = `${width}px`
+    },
+
+    /**
+     * set Image block to center
+     *
+     * @param {HTMLElement} $imageBlock
+     * @param {String|Number} width
+     */
+    setImageBlockToCenter ($imageBlock, width) {
+      $imageBlock.style.marginLeft = `calc(50% - ${width / 2}px)`
+    },
+
+    /**
+     * Set anchor to headings in template
+     */
+    setAnchorToHeadings () {
+      this.$headings.forEach(this.setAnchorToHeading.bind(this))
+    },
+
+    /**
+     * Set anchor to heading
+     *
+     * @param {HTMLElement} $heading
+     */
+    setAnchorToHeading ($heading) {
+      const link = this.link($heading)
+      const $anchor = this.$anchor($heading, `#${link}`)
+
+      $heading.setAttribute('id', link)
+      $heading.innerHTML = $anchor.outerHTML
+    },
+
+    /**
+     * Get link for heading
+     *
+     * @param {HTMLElement} $heading
+     *
+     * @return {string}
+     */
+    link ($heading) {
+      return this.$id(encodeURIComponent($heading.textContent))
+    },
+
+    /**
+     * Get new anchor
+     *
+     * @param {HTMLElement} $heading
+     * @param {string} link
+     *
+     * @return {HTMLElement}
+     */
+    $anchor ($heading, link) {
+      const $anchor = document.createElement('a')
+
+      $anchor.setAttribute('href', link)
+      $anchor.textContent = $heading.textContent
+
+      return $anchor
+    },
+
+    /**
+     * Get article template content
+     *
+     * @return {HTMLElement}
+     */
+    get $article () {
+      return this.$refs.articleTemplate.content
+    },
+
+    /**
+     * Get headings in content
+     *
+     * @return {NodeListOf<HTMLElement>}
+     */
+    get $headings () {
+      return this.$article.querySelectorAll(this.supportHeadings)
+    }
+  })))
+
+style(once='content')
+  :postcss
+    #content {
+      .contents_style {
+        @apply text-left p-0 leading-loose text-h-600 dark:text-h-200;
+
+        a {
+          @apply text-h-orange dark:text-h-blue decoration-0;
+        }
+
+        h2,
+        h3,
+        h4 {
+          @apply my-5 font-medium scroll-mt-20;
+
+          a {
+            @apply text-h-600 dark:text-h-200;
+          }
+        }
+
+        h2 {
+          @apply text-xl lg:text-2xl;
+        }
+
+        h3 {
+          @apply text-lg lg:text-xl;
+        }
+
+        h4 {
+          @apply text-base lg:text-lg;
+        }
+
+        ol[data-ke-list-type],
+        ul[data-ke-list-type] {
+          @apply flex flex-col gap-y-1 list-inside my-5;
+
+          ol[data-ke-list-type],
+          ul[data-ke-list-type] {
+            @apply my-0 ml-6;
+          }
+        }
+
+        p,
+        ol[data-ke-list-type],
+        ul[data-ke-list-type],
+        table[data-ke-align],
+        blockquote[data-ke-style=style2],
+        blockquote[data-ke-style=style3] {
+          @apply text-h-600 dark:text-h-300;
+
+          b,
+          strong {
+            @apply font-bold;
+          }
+
+          a {
+            @apply inline-block text-h-orange dark:text-h-blue;
+          }
+
+          code {
+            @apply relative -top-[1px] px-2 py-0.5 rounded-md whitespace-normal text-sm font-sans text-h-600 bg-h-200 dark:text-h-300 dark:bg-h-700;
+          }
+        }
+
+        figure,
+        pre,
+        table[data-ke-align],
+        [data-ke-type=moreLess] {
+          @apply my-5;
+        }
+
+        hr {
+          @apply dark:invert dark:brightness-0;
+        }
+
+        table[data-ke-align] {
+          td,
+          th {
+            @apply bg-transparent border-0 border-b border-solid border-h-400 px-3 py-4 box-border text-sm leading-loose text-h-600 dark:text-h-200;
+          }
+        }
+
+        figure {
+          figcaption {
+            @apply text-h-400 text-center text-sm leading-loose;
+          }
+
+          img {
+            @apply rounded-xl;
+          }
+
+          &.imageblock.alignCenter,
+          &.imagegridblock {
+            @apply max-w-none max-lg:w-full max-lg:mx-0 !important;
+          }
+
+          &.imageblock,
+          &.imagegridblock {
+            span,
+            a {
+              @apply block relative max-w-full max-h-full w-auto h-auto;
+
+              &::after {
+                @apply content-[''] block h-0 w-full;
+              }
+
+              img {
+                @apply absolute top-0 left-0 w-full h-full block;
+              }
+            }
+          }
+
+          &.imageslideblock {
+            .image-container {
+              @apply min-h-0 max-w-full max-h-full w-auto h-auto !important;
+
+              &::after {
+                @apply content-[''] block h-0 w-full;
+              }
+
+              .selected  {
+                @apply absolute top-0 left-0 max-w-full max-h-full w-full h-full flex justify-center items-center;
+
+                img {
+                  @apply w-auto h-auto block;
+                }
+              }
+            }
+          }
+
+          &[data-ke-type=opengraph] {
+            a {
+              @apply border-0;
+
+              .og-image {
+                @apply border-r-0 rounded-l-xl overflow-hidden;
+              }
+            }
+
+            .og-text {
+              @apply bg-h-200 dark:bg-h-700 rounded-r-xl;
+
+              .og-title,
+              .og-desc,
+              .og-host {
+                @apply text-h-500 dark:text-h-200 font-sans;
+              }
+
+              .og-title {
+                @apply text-h-600 font-bold;
+              }
+            }
+          }
+
+          &.fileblock {
+            @apply rounded-xl border-0 bg-h-200 dark:bg-h-700;
+
+            .filename {
+              @apply mt-3;
+
+              .name {
+                @apply h-auto;
+              }
+            }
+
+            .filename,
+            .size {
+              @apply dark:text-h-200;
+            }
+
+            .image,
+            a::after {
+              @apply dark:invert dark:brightness-0;
+            }
+          }
+        }
+
+        [data-ke-type=moreLess] {
+          @apply relative;
+
+          &::before {
+            @apply content-[''] absolute top-4 right-0 w-full h-0 w-full -z-[1] border-b border-dashed border-h-400;
+          }
+
+          &.open {
+            .btn-toggle-moreless::before {
+              @apply fa-circle-arrow-down;
+            }
+          }
+
+          .btn-toggle-moreless {
+            @apply bg-h-700 text-h-200 text-sm font-bold rounded-xl px-3 py-1 inline-block;
+
+            &::before {
+              @apply mr-1.5 fa-circle-arrow-right;
+            }
+          }
+
+          .moreless-content {
+            @apply mt-6;
+          }
+        }
+
+        blockquote[data-ke-style] {
+          @apply font-[initial] my-4 text-h-600 dark:text-h-200 font-sans;
+
+          &[data-ke-style=style1] {
+            @apply font-medium text-xl pt-7 leading-loose text-h-600 dark:text-h-200;
+          }
+
+          &[data-ke-style=style2] {
+            @apply border-l-2 border-solid border-h-300 dark:border-h-400 pl-3 pr-1 text-h-400 text-left text-sm leading-loose;
+          }
+
+          &[data-ke-style=style3] {
+            @apply border-0 text-h-400 bg-h-200 dark:bg-h-700 dark:text-h-400 leading-loose rounded-xl;
+          }
+        }
+
+        pre {
+          code {
+            @apply px-4 leading-normal rounded-xl;
+
+            &.hljs {
+              @apply bg-h-200 dark:bg-h-700;
+            }
+          }
+        }
+      }
+    }
+
+style(once='content-postbtn')
+  :postcss
+    #content {
+      .container_postbtn {
+        @apply p-0 pt-9 text-h-600 dark:text-h-200;
+
+        .postbtn_like > .wrap_btn:not([id^=reaction-]) > button,
+        .btn_subscription {
+          @apply w-9 h-9 inline-block shadow-none outline-0 rounded-md cursor-pointer duration-200 leading-none text-[0] p-0 bg-h-200 hover:bg-h-300 before:text-h-500 dark:bg-h-700 dark:before:text-h-200 dark:hover:bg-h-600;
+        }
+
+        .postbtn_like {
+          @apply border-0 p-0 flex gap-x-2;
+
+          .wrap_btn {
+            @apply inline-block border-0;
+
+            button,
+            button[data-entry-id],
+            .uoc-count {
+              &::before {
+                @apply font-bold text-sm;
+              }
+            }
+
+            .ico_like,
+            .ico_share,
+            .ico_statistics,
+            .ico_etc {
+              @apply text-hidden bg-none;
+            }
+
+            &[id^=reaction-] button {
+              @apply w-16 h-9 rounded-md bg-h-700 hover:bg-h-600;
+
+              .uoc-icon {
+                @apply text-h-200;
+              }
+
+              .uoc-count {
+                @apply font-bold leading-none;
+
+                &::before {
+                  @apply text-sm mr-1.5 fa-heart;
+                }
+              }
+            }
+
+            &.wrap_btn_share .btn_share::before {
+              @apply fa-share-nodes;
+            }
+
+            button[data-entry-id] {
+              &::before {
+                @apply fa-chart-pie;
+              }
+            }
+
+            &.wrap_btn_etc {
+              .btn_etc1::before {
+                @apply fa-wrench;
+              }
+
+              .btn_etc2::before {
+                @apply fa-ellipsis;
+              }
+            }
+          }
+        }
+      }
+    }
+
+style(once='content-tistory-ccl-layer')
+  :postcss
+    #tistoryCclLayer {
+      @apply shadow-none border-0 bg-h-200 text-h-400 dark:bg-h-700 dark:text-h-300 rounded-md;
+
+      span {
+        @apply text-h-400;
+      }
+
+      .ico_arrbt {
+        @apply hidden;
+      }
+    }
+
+style(once='content-tistory-layer')
+  :postcss
+    #tistorySnsLayer,
+    #tistoryEtcLayer {
+      @apply rounded-md shadow-none bg-h-200 dark:bg-h-700;
+
+      .btn_mark {
+        @apply text-h-400 dark:text-h-300;
+
+        &:hover {
+          @apply bg-h-300 dark:bg-h-600 dark:text-h-200;
+        }
+      }
+
+      .ico_arrbt {
+        @apply hidden;
+      }
+
+      .bundle_post a {
+        @apply text-h-400 dark:text-h-300 no-underline;
+      }
+    }

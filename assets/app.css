@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.menu_toolbar {
+  @apply hidden;
+}
+
+a,
+button {
+  @apply pointer-events-auto !important;
+}
+
+/* https://github.com/aFarkas/lazysizes#css-api */
+.lazyload,
+.lazyloading {
+  @apply animate-pulse bg-h-300 dark:bg-h-700;
+}
+
+.lazyloaded {
+  @apply animate-none bg-h-100;
+}
+
+.lazyload:not([src]) {
+  @apply invisible;
+}
+
+/* https://swiperjs.com/demos#navigation */
+.swiper-button-next,
+.swiper-button-prev {
+  --swiper-navigation-size: 1.5rem;
+  --swiper-navigation-color: rgba(255, 255, 255, .6);
+  @apply max-lg:hidden !important;
+}
+
+@layer utilities {
+  .text-hidden {
+    @apply absolute w-px h-px -m-px overflow-hidden !important;
+  }
+
+  .text-overflow-hidden {
+    @apply overflow-hidden whitespace-nowrap text-ellipsis;
+  }
+
+  .font-awesome {
+    @apply font-['Font_Awesome_6_Free'] font-bold;
+  }
+
+  .fa-chevron-right {
+    @apply font-awesome content-['\f105'];
+  }
+
+  .fa-circle-arrow-right {
+    @apply font-awesome content-['\f0a9'];
+  }
+
+  .fa-circle-arrow-down {
+    @apply font-awesome content-['\f0ab'];
+  }
+
+  .fa-heart {
+    @apply font-awesome content-['\f004'];
+  }
+
+  .fa-share-nodes {
+    @apply font-awesome content-['\f1e0'];
+  }
+
+  .fa-chart-pie {
+    @apply font-awesome content-['\f200'];
+  }
+
+  .fa-wrench {
+    @apply font-awesome content-['\f0ad'];
+  }
+
+  .fa-ellipsis {
+    @apply font-awesome content-['\f141'];
+  }
+
+  .fa-star {
+    @apply font-awesome content-['\f005'];
+  }
+
+  .fa-tag {
+    @apply font-awesome content-['\f02b'];
+  }
+}
