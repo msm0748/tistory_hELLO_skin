@@ -1,26 +1,8 @@
 #bottom(class='flex justify-end px-4 w-full box-border fixed text-sm z-30 bottom-3 xl:bottom-4 <s_if_var_sidebar>xl:w-c</s_if_var_sidebar>')
-  div(class='flex gap-x-3')
-    button(
-      x-data='theme'
-      @click='toggle')
-      span(class='text-hidden') 테마
-      i(class='fa-solid fa-moon text-base')
+  div
     a(href='#hELLO')
       span(class='text-hidden') 상단으로
       i(class='fa-solid fa-chevron-up text-base')
-
-script.
-  document.addEventListener('alpine:init', () => Alpine.data('theme', () => ({
-    /**
-     * Toggle Theme
-     */
-    toggle () {
-      localStorage.TTDARK = document.documentElement.classList.contains('dark') ? 'N' : 'Y'
-      document.documentElement.classList.toggle('dark')
-
-      this.$data.dark = ! this.$data.dark
-    }
-  })))
 
 style
   :postcss

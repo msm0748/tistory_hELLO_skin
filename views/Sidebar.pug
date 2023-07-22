@@ -1,7 +1,7 @@
 aside#sidebar(
   :class='sidebar ? "left-0" : "-left-[calc(theme(width.s))]"'
-  class='h-full fixed top-0 w-s overflow-hidden z-40 transition-[left] duration-200 p-0 bg-h-200 dark:bg-h-700 <s_if_var_sidebar>xl:left-0</s_if_var_sidebar>')
-  div(class='flex flex-col gap-y-6 overflow-x-hidden overflow-y-scroll h-full w-[calc(theme(width.s)+theme(spacing.8))] absolute py-6 border-box')
+  class='h-full fixed top-0 w-80 overflow-hidden z-40 transition-[left] duration-200 p-0 bg-h-200 dark:bg-h-700 <s_if_var_sidebar>xl:left-0</s_if_var_sidebar>')
+  div(class='flex flex-col gap-y-6 overflow-x-hidden overflow-y-scroll h-full w-[calc(theme(width.80)+theme(spacing.8))] absolute py-6 border-box')
     s_sidebar
       s_sidebar_element
         // 프로필
@@ -22,6 +22,9 @@ aside#sidebar(
         // 공지사항
         include Sidebar/Notice
       s_sidebar_element
+        // 최근 글
+        include Sidebar/RecentPosts
+      s_sidebar_element
         // 인기 글
         include Sidebar/PopularPosts
       s_sidebar_element
@@ -30,9 +33,7 @@ aside#sidebar(
       s_sidebar_element
         // 최근 댓글
         include Sidebar/RecentComments
-      s_sidebar_element
-        // 최근 글
-        include Sidebar/RecentPosts
+
     include Sidebar/Copyright
   template(x-teleport='body')
     div(
@@ -50,7 +51,7 @@ style
   :postcss
     #sidebar {
       .sidebar-element {
-        @apply w-64 px-5;
+        @apply w-80 px-5;
 
         h2 {
           @apply text-h-800 dark:text-h-200 mb-4 font-bold text-sm;
