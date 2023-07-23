@@ -10,12 +10,12 @@ div(
   x-transition:leave-end='opacity-0'
   class='w-full box-border px-4 h-14 top-0 fixed flex justify-between items-center z-30 backdrop-blur bg-h-100/50 dark:bg-h-800/80 xl:px-5 <s_if_var_sidebar>xl:w-c</s_if_var_sidebar>')
   div
-    img.lazyload(
+    img(
       @click='sidebar = ! sidebar'
       class='rounded-full w-9 h-9 cursor-pointer <s_if_var_sidebar>xl:invisible</s_if_var_sidebar>'
-      data-src='[##_image_##]'
+      src="../images/menu.png"
       data-sizes='auto'
-      alt='[##_blogger_##]'
+      alt='메뉴바'
       width='36'
       height='36')
   div

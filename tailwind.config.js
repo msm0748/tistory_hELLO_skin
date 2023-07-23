@@ -10,7 +10,7 @@ module.exports = {
       sm: "640px",
       md: "768px",
       lg: "1140px",
-      xl: "1460px",
+      xl: "1400px",
       "2xl": "1820px",
     },
     colors: {
@@ -32,7 +32,7 @@ module.exports = {
     },
     extend: {
       width: {
-        idx: "1100px",
+        idx: "calc(1100px - 4rem)",
         pem: "var(--h-width)",
         s: "20rem", // sidebar
         c: "calc(100% - 20rem)", // 100% - width.sidebar
