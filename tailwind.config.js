@@ -2,6 +2,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  plugins: [require("@tailwindcss/line-clamp")],
   content: ["./app.pug", "./index.pug", "./views/**/*.pug"],
   darkMode: "class",
   theme: {
