@@ -9,7 +9,7 @@ module.exports = {
     screens: {
       sm: "640px",
       md: "768px",
-      lg: "1140px",
+      lg: "1100px",
       xl: "1400px",
       "2xl": "1820px",
     },
@@ -32,10 +32,10 @@ module.exports = {
     },
     extend: {
       width: {
-        idx: "calc(1100px - 4rem)",
+        idx: "calc(1100px - 2rem)",
         pem: "var(--h-width)",
-        s: "20rem", // sidebar
-        c: "calc(100% - 20rem)", // 100% - width.sidebar
+        s: "18rem", // sidebar
+        c: "calc(100% - 18rem)", // 100% - width.sidebar
       },
       keyframes: {
         loading: {
