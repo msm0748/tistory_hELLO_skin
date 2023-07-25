@@ -21,7 +21,7 @@ script(once='alpine-content-component').
      *
      * @property {array} headings
      */
-    supportHeadings: '.contents_style > h2, .contents_style > h3',
+    supportHeadings: '.contents_style > h2, .contents_style > h3, .contents_style > h4',
 
     /**
      * Headings
@@ -329,11 +329,72 @@ script(once='alpine-content-component').
 style(once='content')
   :postcss
     #content {
+      #TOC {
+        .toc-body {
+          @apply max-h-96 overflow-auto;
+
+          &::-webkit-scrollbar {
+            width: 8px;
+          }
+          &::-webkit-scrollbar-thumb {
+            height: 30%;
+            background: #78abf0;
+            border-radius: 10px;
+          }
+          &::-webkit-scrollbar-track {
+            background: rgba(33, 122, 244, .1);
+          }
+        }
+
+        .toc-list {
+          li {
+            &[data-tag="0"] {
+              counter-increment: tag0;
+              counter-reset: tag1;
+
+              div::before {
+                content: counter(tag0);
+              }
+            }
+
+            &[data-tag="1"] {
+              counter-increment: tag1;
+              counter-reset: tag2;
+
+              div::before {
+                content: counter(tag0)'.'counter(tag1);;
+              }
+            }
+
+            &[data-tag="2"] {
+              counter-increment: tag2;
+              counter-reset: tag3;
+
+              div::before {
+                content: counter(tag0)'.'counter(tag1)'.'counter(tag2);
+              }
+            }
+              
+            div::before {
+              margin-right: 10px;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+
+
+
       .contents_style {
         @apply text-left p-0 leading-loose text-h-600 dark:text-h-200;
 
         a {
           @apply text-h-orange dark:text-h-blue decoration-0;
+        }
+
+        h2::before{
+          content: "✔️";
+          margin-right: 8px;
         }
 
         h2,
@@ -390,6 +451,7 @@ style(once='content')
           }
         }
 
+
         figure,
         pre,
         table[data-ke-align],
@@ -409,6 +471,15 @@ style(once='content')
         }
 
         figure {
+          @apply !w-full !m-auto;
+
+          span{
+            @apply shadow-[0_2px_10px_2px_rgba(0,0,0,0.15)] rounded-xl ease-in-out duration-200 overflow-hidden;
+          }
+          &:hover span{
+            @apply xl:scale-[1.02];
+          }
+
           figcaption {
             @apply text-h-400 text-center text-sm leading-loose;
           }
@@ -549,9 +620,6 @@ style(once='content')
           code {
             @apply px-4 leading-normal rounded-xl;
 
-            &.hljs {
-              @apply bg-h-200 dark:bg-h-700;
-            }
           }
         }
       }
@@ -665,3 +733,4 @@ style(once='content-tistory-layer')
         @apply text-h-400 dark:text-h-300 no-underline;
       }
     }
+

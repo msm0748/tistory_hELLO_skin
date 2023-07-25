@@ -43,7 +43,9 @@ html#hELLO(
 
     script(fixed).
       if (! ('TTDARK' in localStorage)) {
-        localStorage.TTDARK = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Y' : 'N'
+        localStorage.TTDARK = 'N'
+      }else{
+        localStorage.TTDARK = 'N'
       }
 
       window.TTDARK = localStorage.TTDARK === 'Y'
@@ -57,3 +59,6 @@ html#hELLO(
 
     script.
       window.addEventListener('DOMContentLoaded', () => Alpine.start())
+    link(rel="stylesheet", href="./images/codeblock.css")
+    script(defer src="./images/codeblock.js") 
+    
