@@ -1,8 +1,12 @@
 /* reset CSS */
 .custom table {
-    border: 1px solid black;
-    border-collapse: initial;
+  border: 1px solid black;
+  border-collapse: initial;
 }
-.custom table * {
-    border: 1px solid;
+.custom table th {
+  text-align: center;
+}
+.custom table th,
+.custom table td {
+  border: 1px solid;
 }
