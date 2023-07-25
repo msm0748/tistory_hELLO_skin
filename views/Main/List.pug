@@ -22,9 +22,12 @@ style
       .list {
         @apply flex flex-col gap-y-6 sm:gap-y-0;
       }
-
+      .post + .post {
+        @apply border-t border-solid border-h-300 dark:border-h-400;
+      }
       .post {
-        @apply flex flex-col gap-y-4 sm:flex-row-reverse sm:items-center sm:justify-end sm:gap-x-6 sm:h-48 border-t border-solid border-h-300 dark:border-h-400;
+        @apply flex flex-col gap-y-4 sm:flex-row-reverse sm:items-center sm:justify-end sm:gap-x-6 sm:h-48;
+
 
         .thumbnail {
           img {
