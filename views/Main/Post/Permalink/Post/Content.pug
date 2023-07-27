@@ -660,6 +660,10 @@ style(once='content-postbtn')
             &[id^=reaction-] button {
               @apply w-16 h-9 rounded-md bg-h-700 hover:bg-h-600;
 
+              &:hover .uoc-count{
+                animation: jello-vertical 0.8s both;
+              }
+
               .uoc-icon {
                 @apply text-h-200;
               }
@@ -694,6 +698,29 @@ style(once='content-postbtn')
             }
           }
         }
+      }
+    }
+    @keyframes jello-vertical {
+      0% {
+          transform: scale3d(0.9, 0.9, 1);
+      }
+      30% {
+          transform: scale3d(0.85, 1.21, 1);
+      }
+      40% {
+          transform: scale3d(1.15, 0.85, 1);
+      }
+      50% {
+          transform: scale3d(0.92, 1.08, 1);
+      }
+      65% {
+          transform: scale3d(1.03, 0.95, 1);
+      }
+      75% {
+          transform: scale3d(0.95, 1.03, 1);
+      }
+      100% {
+          transform: scale3d(1, 1, 1);
       }
     }
 
