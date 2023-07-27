@@ -1,4 +1,8 @@
 /* reset CSS */
+.custom {
+  padding: 5px;
+  border: 1px solid;
+}
 .custom table {
   border: 1px solid black;
   border-collapse: initial;
