@@ -28,7 +28,10 @@ window.addEventListener('DOMContentLoaded', function () {
   for (const codeBlock of codeBlocks) {
     const codes = codeBlock.innerHTML.match(/(.*)(\n|.*$)/g);
 
-    const processedCodes = codes.reduce((prevCodes, curCode) => prevCodes + `<div class="line">${curCode}</div>`, '');
+    const processedCodes = codes.reduce(
+      (prevCodes, curCode) => prevCodes + `<div class="line">${curCode}</div>`,
+      ''
+    );
 
     const copyButton = `<button type="button" class="copy-btn" 
   data-code="${encodeURI(codeBlock.textContent)}" 
