@@ -329,6 +329,9 @@ script(once='alpine-content-component').
 style(once='content')
   :postcss
     #content {
+      #article *::selection {
+        background: yellow;
+      }
       #TOC {
         .toc-body {
           @apply max-h-96 overflow-auto;
